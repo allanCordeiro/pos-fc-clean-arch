@@ -1,6 +1,7 @@
 package webserver
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -10,6 +11,7 @@ import (
 type Route struct {
 	HTTPMethod  string
 	HandlerFunc http.HandlerFunc
+	Path        string
 }
 
 type WebServer struct {
@@ -27,7 +29,7 @@ func NewWebServer(serverPort string) *WebServer {
 }
 
 func (s *WebServer) AddHandler(httpMethod string, path string, handler http.HandlerFunc) {
-	s.Handlers[path] = Route{HTTPMethod: httpMethod, HandlerFunc: handler}
+	s.Handlers[fmt.Sprintf("%s/%s", httpMethod, path)] = Route{HTTPMethod: httpMethod, HandlerFunc: handler, Path: path}
 }
 
 // loop through the handlers and add them to the router
@@ -35,12 +37,12 @@ func (s *WebServer) AddHandler(httpMethod string, path string, handler http.Hand
 // start the server
 func (s *WebServer) Start() {
 	s.Router.Use(middleware.Logger)
-	for path, handler := range s.Handlers {
+	for _, handler := range s.Handlers {
 		switch handler.HTTPMethod {
 		case "POST":
-			s.Router.Post(path, handler.HandlerFunc)
+			s.Router.Post(handler.Path, handler.HandlerFunc)
 		case "GET":
-			s.Router.Get(path, handler.HandlerFunc)
+			s.Router.Get(handler.Path, handler.HandlerFunc)
 		default:
 			panic("unrecognized method")
 		}

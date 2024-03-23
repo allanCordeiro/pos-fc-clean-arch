@@ -13,7 +13,7 @@ services:
       - 3306:3306
     volumes:
       - .docker/mysql:/var/lib/mysql
-      - ./sql/create_table.sql:/docker-entrypoint-initdb.d/init.sql
+      - .setup/sql/create_table.sql:/docker-entrypoint-initdb.d/init.sql
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -24,4 +24,10 @@ services:
       - 15672:15672
     environment:
       RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_PASS: guest            
+    volumes:
+      - ./setup/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./setup/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./setup/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+                    
+

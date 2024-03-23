@@ -5,11 +5,15 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 
+	graphql_handler "github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	configs "github.com/allanCordeiro/pos-fc-clean-arch/config"
 	"github.com/allanCordeiro/pos-fc-clean-arch/internal/event"
 	"github.com/allanCordeiro/pos-fc-clean-arch/internal/event/handler"
 	"github.com/allanCordeiro/pos-fc-clean-arch/internal/infra/database"
+	"github.com/allanCordeiro/pos-fc-clean-arch/internal/infra/graph"
 	"github.com/allanCordeiro/pos-fc-clean-arch/internal/infra/grpc/pb"
 	"github.com/allanCordeiro/pos-fc-clean-arch/internal/infra/grpc/service"
 	"github.com/allanCordeiro/pos-fc-clean-arch/internal/infra/web"
@@ -69,8 +73,18 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	grpcServer.Serve(lis)
+	go grpcServer.Serve(lis)
 
+	srv := graphql_handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
+		CreateOrderUseCase: *createOrderUseCase,
+		ListOrderUseCase:   *listOrderUseCase,
+	}}))
+
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", configs.GraphQLServerPort)
+	log.Fatal(http.ListenAndServe(":"+configs.GraphQLServerPort, nil))
 }
 
 func getRabbitMQChannel() *amqp.Channel {

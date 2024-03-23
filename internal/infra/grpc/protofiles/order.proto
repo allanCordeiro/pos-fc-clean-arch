@@ -1,0 +1,26 @@
+syntax = "proto3";
+package pb;
+option go_package = "internal/infra/grpc/pb";
+
+message CreateOrderRequest {
+    float price = 1;
+    float tax = 2;
+}
+
+message CreateOrderResponse {
+    string id = 1;
+    float price = 2;
+    float tax = 3;
+    float final_price = 4;
+}
+
+message ListOrderRequest {}
+
+message ListOrderResponse {
+    repeated CreateOrderResponse order_list = 1;
+}
+
+service OrderService {
+    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+    rpc ListOrder(ListOrderRequest) returns (ListOrderResponse);
+}

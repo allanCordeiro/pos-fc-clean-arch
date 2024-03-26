@@ -20,7 +20,7 @@ import (
 	"github.com/allanCordeiro/pos-fc-clean-arch/internal/infra/web/webserver"
 	"github.com/allanCordeiro/pos-fc-clean-arch/internal/usecases"
 	"github.com/allanCordeiro/pos-fc-clean-arch/pkg/events"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 	"github.com/streadway/amqp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -32,12 +32,13 @@ func main() {
 		panic(err)
 	}
 
+	//postgres://dbuser:bdpassword@postgres/despensa?sslmode=disable
 	db, err := sql.Open(configs.DBDriver,
-		fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+		fmt.Sprintf("%s://%s:%s@%s/%s?sslmode=disable",
+			configs.DBDriver,
 			configs.DBUser,
 			configs.DBPassword,
 			configs.DBHost,
-			configs.DBPort,
 			configs.DBName,
 		))
 	if err != nil {

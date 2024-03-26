@@ -5,8 +5,8 @@ go 1.22.0
 require (
 	github.com/99designs/gqlgen v0.17.45
 	github.com/go-chi/chi/v5 v5.0.12
-	github.com/go-sql-driver/mysql v1.8.0
 	github.com/google/uuid v1.6.0
+	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/spf13/viper v1.18.2
 	github.com/streadway/amqp v1.1.0
@@ -17,7 +17,6 @@ require (
 )
 
 require (
-	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect

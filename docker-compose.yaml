@@ -38,7 +38,7 @@ services:
   api:
       container_name: api 
       #build: .  
-      build: allancordeiros/pos-fc-clean-arch:latest
+      image: allancordeiros/pos-fc-clean-arch:latest
       hostname: api
       restart: always          
       depends_on:

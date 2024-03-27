@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"time"
 
 	graphql_handler "github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -74,8 +75,8 @@ func startWebServer(port string, ed events.EventDispatcherInterface,
 	webOrderHandler := web.NewWebOrderHandler(ed, repository, event)
 	webserver.AddHandler("POST", "/order", webOrderHandler.Create)
 	webserver.AddHandler("GET", "/order", webOrderHandler.List)
-	webserver.Start()
 	log.Printf("starting webserver on port %s", port)
+	webserver.Start()
 }
 
 func startGrpcServer(port string,
@@ -111,6 +112,8 @@ func startGraphQlServer(port string,
 }
 
 func getRabbitMQChannel(host string, port string, user string, password string) *amqp.Channel {
+	//usually rabbitMQ take some time to cold start. Not a sexy way to do this, but it works
+	time.Sleep(5 * time.Second)
 	rabbitMQUrl := fmt.Sprintf("amqp://%s:%s@%s:%s/", user, password, host, port)
 	conn, err := amqp.Dial(rabbitMQUrl)
 	if err != nil {

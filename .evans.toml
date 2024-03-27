@@ -1,8 +1,8 @@
 [default]
-package = ''
+package = 'pb'
 protofile = ['']
 protopath = ['']
-service = ''
+service = 'OrderService'
 
 [log]
 prefix = 'evans: '
